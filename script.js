@@ -6,7 +6,7 @@ const scene = new THREE.Scene();
 const distance = 500;
 const camera = new THREE.OrthographicCamera( window.innerWidth/-2, window.innerWidth/2, window.innerHeight / 2, window.innerHeight / -2, 0.1, 10000 );
 
-camera.rotation.x = 50*Math.PI/90;
+camera.rotation.x = 50*Math.PI/180;
 camera.rotation.y = 20*Math.PI/180;
 camera.rotation.z = 10*Math.PI/180;
 
