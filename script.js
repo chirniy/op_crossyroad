@@ -65,12 +65,12 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+hemiLight = new THREE.HemisphereLight(0xe3f2fa, 0xe3f2fa, 0.6);
 scene.add(hemiLight)
 
 const initialDirLightPositionX = -100;
-const initialDirLightPositionY = -100;
-dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+const initialDirLightPositionY = 0;
+dirLight = new THREE.DirectionalLight(0xe3f2fa, 0.6);
 dirLight.position.set(initialDirLightPositionX, initialDirLightPositionY, 200);
 dirLight.castShadow = true;
 dirLight.target = chicken;
@@ -643,7 +643,8 @@ function Lane(index) {
 document.querySelector("#retry").addEventListener("click", () => {
   lanes.forEach(lane => scene.remove( lane.mesh ));
   initaliseValues();
-  endDOM.style.visibility = 'hidden';
+  endDOM.classList.add('hide');
+  endDOM.classList.remove('show');
   gameOver = false;
   isFlattened = false;
   chicken.scale.set(1, 1, 1)
@@ -826,7 +827,10 @@ if (lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck') {
       const carMinX = vechicle.position.x - vechicleLength * zoom / 2;
       const carMaxX = vechicle.position.x + vechicleLength * zoom / 2;
       if (chickenMaxX > carMinX && chickenMinX < carMaxX) {
-          endDOM.style.visibility = 'visible';
+          endDOM.classList.remove('hide');
+          setTimeout(() => {
+            endDOM.classList.add('show');
+          }, 1000); // задержка 1000 мс = 1 секунда
           gameOver = true;
 
           // Сплющиваем курицу

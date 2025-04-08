@@ -17,6 +17,7 @@ button {
   top: 20px;
   right: 20px;
 }
+
 #end {
   position: absolute;
   min-width: 100%;
@@ -25,7 +26,22 @@ button {
   align-items: center;
   justify-content: center;
   visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background-color: rgba(0, 0, 0, 0.6); /* тёмный фон с прозрачностью */
+  z-index: 10;
 }
+
+#end.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+#end.hide {
+  visibility: visible;
+  opacity: 0;
+}
+
 #end button {
   background-color: red;
   padding: 20px 50px 20px 50px;
