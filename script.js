@@ -94,7 +94,7 @@ scene.add(backLight)
 
 const laneTypes = ['car', 'truck', 'forest'];
 const laneSpeeds = [2, 2.5, 3];
-const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b,0xf50aed,0x02d9fa];
+const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b,0xf50aed,0x02d9fa,0x02d9fb];
 const threeHeights = [20,45,60];
 
 const initaliseValues = () => {
