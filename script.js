@@ -682,7 +682,15 @@ window.addEventListener("keydown", event => {
   }
 });
 
+let lastKeyPressTime = 0;
+const keyPressCooldown = 200; // миллисекунд
+
 function move(direction) {
+
+  const now = Date.now();
+  if (now - lastKeyPressTime < keyPressCooldown) return; // слишком рано
+  lastKeyPressTime = now;
+
   const finalPositions = moves.reduce((position,move) => {
     if(move === 'forward') return {lane: position.lane+1, column: position.column};
     if(move === 'backward') return {lane: position.lane-1, column: position.column};
