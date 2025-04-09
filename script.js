@@ -65,12 +65,12 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add( chicken );
 
-hemiLight = new THREE.HemisphereLight(0xe3f2fa, 0xe3f2fa, 0.6);
+hemiLight = new THREE.HemisphereLight(0xdedda2, 0xbacee3, 0.6);
 scene.add(hemiLight)
 
 const initialDirLightPositionX = -100;
 const initialDirLightPositionY = 0;
-dirLight = new THREE.DirectionalLight(0xe3f2fa, 0.6);
+dirLight = new THREE.DirectionalLight(0xe0dbab, 0.6);
 dirLight.position.set(initialDirLightPositionX, initialDirLightPositionY, 200);
 dirLight.castShadow = true;
 dirLight.target = chicken;
@@ -259,7 +259,7 @@ function Three() {
 
   const trunk = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 15*zoom, 15*zoom, 20*zoom ), 
-    new THREE.MeshPhongMaterial( { color: 0x4d2926, flatShading: true } )
+    new THREE.MeshPhongMaterial( { color: 0x703939, flatShading: true } )
   );
   trunk.position.z = 10*zoom;
   trunk.castShadow = true;
@@ -270,7 +270,7 @@ function Three() {
 
   const crown = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 30*zoom, 30*zoom, height*zoom ), 
-    new THREE.MeshLambertMaterial( { color: 0x7aa21d, flatShading: true } )
+    new THREE.MeshLambertMaterial( { color: 0x9fc217, flatShading: true } )
   );
   crown.position.z = (height/2+20)*zoom;
   crown.castShadow = true;
@@ -278,6 +278,27 @@ function Three() {
   three.add(crown);
 
   return three;  
+}
+
+function Rock() {
+  const rock = new THREE.Group();
+  const sizes = [25, 25, 25]; // Размеры кубов (уменьшаются)
+  const colors = [0xc8b7dc, 0xc8b7dc, 0xc8b7dc]; // Серые оттенки
+
+  sizes.forEach((size, index) => {
+      const cube = new THREE.Mesh(
+          new THREE.BoxBufferGeometry(size * zoom, size * zoom, size * zoom),
+          new THREE.MeshPhongMaterial({ color: colors[index], flatShading: true })
+      );
+      cube.position.z = (sizes.length - index) * zoom; // Поднимаем каждый куб по оси Z
+      rock.add(cube);
+  });
+
+  rock.position.z = 5 * zoom; // Поднимаем камень над землей
+  rock.castShadow = true;
+  rock.receiveShadow = true;
+
+  return rock;
 }
 
 function Chicken() {
@@ -454,32 +475,43 @@ function Chicken() {
 
 function Road() {
   const road = new THREE.Group();
-  
+
   // Создаем основные секции дороги
   const createSection = color => new THREE.Mesh(
     new THREE.PlaneBufferGeometry(boardWidth * zoom, positionWidth * zoom),
     new THREE.MeshPhongMaterial({ color })
   );
 
-  const middle = createSection(0x454A59); // Центральная секция
-  middle.receiveShadow = true;
-  road.add(middle);
+  // Левая полоса
+  const leftLane = createSection(0x454A59); // Цвет левой полосы
+  leftLane.position.x = -boardWidth * zoom / 4; // Смещаем левую полосу влево
+  leftLane.receiveShadow = true;
+  road.add(leftLane);
 
-  const left = createSection(0x393D49); // Левая секция
-  left.position.x = -boardWidth * zoom;
-  road.add(left);
+  // Правая полоса
+  const rightLane = createSection(0x454A59); // Цвет правой полосы
+  rightLane.position.x = boardWidth * zoom / 4; // Смещаем правую полосу вправо
+  rightLane.receiveShadow = true;
+  road.add(rightLane);
 
-  const right = createSection(0x393D49); // Правая секция
-  right.position.x = boardWidth * zoom;
-  road.add(right);
+  // Добавляем пунктирную разделительную полосу
+  const divider = new THREE.Group(); // Группа для пунктирных сегментов
+  const segmentLength = 20 * zoom; // Длина одного сегмента
+  const gapLength = 10 * zoom; // Расстояние между сегментами
+  const totalLength = boardWidth * zoom; // Полная длина разделительной полосы
 
-  // Добавляем разделительную полосу
-  const divider = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(boardWidth * zoom, 4 * zoom), // Тонкая полоса
-    new THREE.MeshPhongMaterial({ color: 0xc3c9c5 }) // цвет
-  );
-  divider.position.z = 1; // Поднимаем немного над дорогой
-  road.add(divider);
+  for (let x = -totalLength / 2; x < totalLength / 2; x += segmentLength + gapLength) {
+    const segment = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(segmentLength, 4 * zoom), // Размер сегмента
+      new THREE.MeshPhongMaterial({ color: 0xc3c9c5 }) // Цвет
+    );
+    segment.position.x = x;
+    segment.position.y = 50; // Располагаем сегмент
+    segment.position.z = 1; // Поднимаем немного над дорогой
+    divider.add(segment);
+  }
+
+  road.add(divider); // Добавляем пунктирную полосу в группу дороги
 
   return road;
 }
@@ -580,21 +612,36 @@ function Lane(index) {
     }
     case 'forest': {
       this.mesh = new Grass();
-
-      this.occupiedPositions = new Set();
-      this.threes = [1,2,3,4].map(() => {
-        const three = new Three();
-        let position;
-        do {
-          position = Math.floor(Math.random()*columns);
-        }while(this.occupiedPositions.has(position))
+      this.occupiedPositions = new Set(); // Позиции, занятые деревьями или камнями
+  
+      // Добавляем деревья
+      this.threes = [1, 2, 3, 4].map(() => {
+          const three = new Three();
+          let position;
+          do {
+              position = Math.floor(Math.random() * columns);
+          } while (this.occupiedPositions.has(position));
           this.occupiedPositions.add(position);
-        three.position.x = (position*positionWidth+positionWidth/2)*zoom-boardWidth*zoom/2;
-        this.mesh.add( three );
-        return three;
-      })
+          three.position.x = (position * positionWidth + positionWidth / 2) * zoom - boardWidth * zoom / 2;
+          this.mesh.add(three);
+          return three;
+      });
+  
+      // Добавляем камни
+      this.rocks = [1, 2].map(() => { // Добавляем 2 камня на полосу
+          const rock = new Rock();
+          let position;
+          do {
+              position = Math.floor(Math.random() * columns);
+          } while (this.occupiedPositions.has(position));
+          this.occupiedPositions.add(position);
+          rock.position.x = (position * positionWidth + positionWidth / 2) * zoom - boardWidth * zoom / 2;
+          this.mesh.add(rock);
+          return rock;
+      });
+  
       break;
-    }
+  }
     case 'car' : {
       this.mesh = new Road();
       this.direction = Math.random() >= 0.5;
@@ -640,15 +687,29 @@ function Lane(index) {
   }
 }
 
-document.querySelector("#retry").addEventListener("click", () => {
-  lanes.forEach(lane => scene.remove( lane.mesh ));
+function retryGame() {
+  lanes.forEach(lane => scene.remove(lane.mesh));
   initaliseValues();
   endDOM.classList.add('hide');
   endDOM.classList.remove('show');
   gameOver = false;
   isFlattened = false;
-  chicken.scale.set(1, 1, 1)
+  chicken.scale.set(1, 1, 1); // Восстанавливаем исходный размер курицы
+}
+
+document.querySelector("#retry").addEventListener("click", () => {
+  retryGame();
 });
+
+// document.querySelector("#retry").addEventListener("click", () => {
+//   lanes.forEach(lane => scene.remove( lane.mesh ));
+//   initaliseValues();
+//   endDOM.classList.add('hide');
+//   endDOM.classList.remove('show');
+//   gameOver = false;
+//   isFlattened = false;
+//   chicken.scale.set(1, 1, 1)
+// });
 
 document.getElementById('forward').addEventListener("click", () => move('forward'));
 
@@ -659,27 +720,31 @@ document.getElementById('left').addEventListener("click", () => move('left'));
 document.getElementById('right').addEventListener("click", () => move('right'));
 
 window.addEventListener("keydown", event => {
-  if (gameOver) return;
+  if (gameOver) {
+      // Проверяем, была ли нажата клавиша пробела
+      if (event.keyCode === 32) { // 32 — код клавиши пробела
+          retryGame(); // Вызываем функцию для перезапуска игры
+      }
+      return;
+  }
 
+  // Остальная логика управления курицей
   if (event.keyCode == '38') {
-    // up arrow
-    move('forward');
-    chicken.rotation.z = 0;
-  }
-  else if (event.keyCode == '40') {
-    // down arrow
-    move('backward');
-    chicken.rotation.z = Math.PI;
-  }
-  else if (event.keyCode == '37') {
-    // left arrow
-    move('left');
-    chicken.rotation.z = Math.PI / 2;
-  }
-  else if (event.keyCode == '39') {
-    // right arrow
-    move('right');
-    chicken.rotation.z = -Math.PI / 2;
+      // up arrow
+      move('forward');
+      chicken.rotation.z = 0;
+  } else if (event.keyCode == '40') {
+      // down arrow
+      move('backward');
+      chicken.rotation.z = Math.PI;
+  } else if (event.keyCode == '37') {
+      // left arrow
+      move('left');
+      chicken.rotation.z = Math.PI / 2;
+  } else if (event.keyCode == '39') {
+      // right arrow
+      move('right');
+      chicken.rotation.z = -Math.PI / 2;
   }
 });
 
@@ -692,34 +757,45 @@ function move(direction) {
   if (now - lastKeyPressTime < keyPressCooldown) return; // слишком рано
   lastKeyPressTime = now;
 
-  const finalPositions = moves.reduce((position,move) => {
-    if(move === 'forward') return {lane: position.lane+1, column: position.column};
-    if(move === 'backward') return {lane: position.lane-1, column: position.column};
-    if(move === 'left') return {lane: position.lane, column: position.column-1};
-    if(move === 'right') return {lane: position.lane, column: position.column+1};
-  }, {lane: currentLane, column: currentColumn})
+
+  const finalPositions = moves.reduce((position, move) => {
+      if (move === 'forward') return { lane: position.lane + 1, column: position.column };
+      if (move === 'backward') return { lane: position.lane - 1, column: position.column };
+      if (move === 'left') return { lane: position.lane, column: position.column - 1 };
+      if (move === 'right') return { lane: position.lane, column: position.column + 1 };
+  }, { lane: currentLane, column: currentColumn });
 
   if (direction === 'forward') {
-    if(lanes[finalPositions.lane+1].type === 'forest' && lanes[finalPositions.lane+1].occupiedPositions.has(finalPositions.column)) return;
-    if(!stepStartTimestamp) startMoving = true;
-    addLane();
+      if (
+          lanes[finalPositions.lane + 1].type === 'forest' &&
+          (lanes[finalPositions.lane + 1].occupiedPositions.has(finalPositions.column))
+      ) return;
+      if (!stepStartTimestamp) startMoving = true;
+      addLane();
+  } else if (direction === 'backward') {
+      if (finalPositions.lane === 0) return;
+      if (
+          lanes[finalPositions.lane - 1].type === 'forest' &&
+          (lanes[finalPositions.lane - 1].occupiedPositions.has(finalPositions.column))
+      ) return;
+      if (!stepStartTimestamp) startMoving = true;
+  } else if (direction === 'left') {
+      if (finalPositions.column === 0) return;
+      if (
+          lanes[finalPositions.lane].type === 'forest' &&
+          (lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column - 1))
+      ) return;
+      if (!stepStartTimestamp) startMoving = true;
+  } else if (direction === 'right') {
+      if (finalPositions.column === columns - 1) return;
+      if (
+          lanes[finalPositions.lane].type === 'forest' &&
+          (lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column + 1))
+      ) return;
+      if (!stepStartTimestamp) startMoving = true;
   }
-  else if (direction === 'backward') {
-    if(finalPositions.lane === 0) return;
-    if(lanes[finalPositions.lane-1].type === 'forest' && lanes[finalPositions.lane-1].occupiedPositions.has(finalPositions.column)) return;
-    if(!stepStartTimestamp) startMoving = true;
-  }
-  else if (direction === 'left') {
-    if(finalPositions.column === 0) return;
-    if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column-1)) return;
-    if(!stepStartTimestamp) startMoving = true;
-  }
-  else if (direction === 'right') {
-    if(finalPositions.column === columns - 1 ) return;
-    if(lanes[finalPositions.lane].type === 'forest' && lanes[finalPositions.lane].occupiedPositions.has(finalPositions.column+1)) return;
-    if(!stepStartTimestamp) startMoving = true;
-  }
-  moves.push(direction)
+
+  moves.push(direction);
 }
 
 function animate(timestamp) {
@@ -819,27 +895,27 @@ function animate(timestamp) {
   }
 
   // Hit test
-if (lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck') {
-  const chickenMinX = chicken.position.x - chickenSize * zoom / 2;
-  const chickenMaxX = chicken.position.x + chickenSize * zoom / 2;
-  const vechicleLength = { car: 60, truck: 105 }[lanes[currentLane].type];
-  lanes[currentLane].vechicles.forEach(vechicle => {
-      const carMinX = vechicle.position.x - vechicleLength * zoom / 2;
-      const carMaxX = vechicle.position.x + vechicleLength * zoom / 2;
-      if (chickenMaxX > carMinX && chickenMinX < carMaxX) {
-          endDOM.classList.remove('hide');
-          setTimeout(() => {
-            endDOM.classList.add('show');
-          }, 1000); // задержка 1000 мс = 1 секунда
-          gameOver = true;
-
-          // Сплющиваем курицу
-          isFlattened = true;
-          chicken.scale.set(1, 1, 0.01); // Уменьшаем высоту курицы
-           // Поворачиваем курицу на бок
-      }
-  });
-}
+  if (lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck') {
+    const chickenMinX = chicken.position.x - chickenSize * zoom / 2;
+    const chickenMaxX = chicken.position.x + chickenSize * zoom / 2;
+    const vechicleLength = { car: 60, truck: 105 }[lanes[currentLane].type];
+    lanes[currentLane].vechicles.forEach(vechicle => {
+        const carMinX = vechicle.position.x - vechicleLength * zoom / 2;
+        const carMaxX = vechicle.position.x + vechicleLength * zoom / 2;
+        if (chickenMaxX > carMinX && chickenMinX < carMaxX) {
+            endDOM.classList.remove('hide');
+            setTimeout(() => {
+              endDOM.classList.add('show');
+            }, 1000); // задержка 1000 мс = 1 секунда
+            gameOver = true;
+  
+            // Сплющиваем курицу
+            isFlattened = true;
+            chicken.scale.set(1, 1, 0.01); // Уменьшаем высоту курицы
+             // Поворачиваем курицу на бок
+        }
+    });
+  }
   renderer.render( scene, camera );	
 }
 
