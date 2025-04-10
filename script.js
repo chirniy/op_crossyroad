@@ -94,8 +94,9 @@ backLight.castShadow = true;
 scene.add(backLight)
 
 const laneTypes = ['car', 'truck', 'forest'];
-const laneSpeeds = [2, 2.5, 3];
-const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b,0xf50aed,0x02d9fa];
+const laneSpeeds = [2.5, 3, 3.5];
+const CarColors = [0xbbf36a, 0xff7035, 0xfdfe5e,0xb08aff];
+const TruckColors = [0x36a7e9, 0xe82e49];
 const threeHeights = [20,45,60];
 
 const initaliseValues = () => {
@@ -147,16 +148,94 @@ function Texture(width, height, rects) {
 
 function Wheel() {
   const wheel = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 12*zoom, 33*zoom, 12*zoom ), 
+    new THREE.BoxBufferGeometry( 13*zoom, 33*zoom, 12*zoom ), 
     new THREE.MeshLambertMaterial( { color: 0x333333, flatShading: true } ) 
   );
   wheel.position.z = 6*zoom;
   return wheel;
 }
 
+function Stripe(a) {
+  const stripeColor = new THREE.Color(a);
+  stripeColor.multiplyScalar(0.8); // Делаем цвет на 30% темнее
+
+  const stripe = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 61*zoom, 10*zoom, 15*zoom ), 
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  );
+  stripe.position.z = 6*zoom;
+  return stripe;
+}
+
+function underCar(a) {
+  const stripeColor = new THREE.Color(a);
+  stripeColor.multiplyScalar(0.6); // Делаем цвет на 30% темнее
+
+  const undercar = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 23*zoom, 32*zoom, 2*zoom ), 
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  );
+  undercar.position.z = 6*zoom;
+  return undercar;
+}
+
+function SideunderCar(a) {
+  const stripeColor = new THREE.Color(a);
+  stripeColor.multiplyScalar(0.6); // Делаем цвет на 30% темнее
+
+  const sideundercar = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry(10*zoom, 32*zoom, 2*zoom ), 
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  );
+  sideundercar.position.z = 6*zoom;
+  return sideundercar;
+}
+
+function underunderCar() {
+  const underundercar = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 23*zoom, 32*zoom, 2*zoom ), 
+    new THREE.MeshLambertMaterial( { color:0x454062, flatShading: true } ) 
+  );
+  underundercar.position.z = 6*zoom;
+  return underundercar;
+}
+
+function SideunderunderCar() {
+  const sideunderundercar = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 7*zoom, 32*zoom, 2*zoom ), 
+    new THREE.MeshLambertMaterial( { color:0x454062, flatShading: true } ) 
+  );
+  sideunderundercar.position.z = 6*zoom;
+  return sideunderundercar;
+}
+
+
+function WingMirror(a){
+  const stripeColor = new THREE.Color(a);
+  stripeColor.multiplyScalar(0.8); // Делаем цвет на 20% темнее
+
+  const stripe = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 8*zoom, 37*zoom, 5*zoom ), 
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  );
+  stripe.position.z = 6*zoom;
+  return stripe;
+}
+
+
+function InWheel()
+{
+  const inwheel = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 5*zoom, 33.5*zoom, 5*zoom ), 
+    new THREE.MeshLambertMaterial( { color: 0xc1c8fc, flatShading: true } ) 
+  );
+  inwheel.position.z = 6*zoom;
+  return inwheel;
+}
+
 function Car() {
   const car = new THREE.Group();
-  const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+  const color = CarColors[Math.floor(Math.random() * CarColors.length)];
   
   const main = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 60*zoom, 30*zoom, 15*zoom ), 
@@ -170,20 +249,61 @@ function Car() {
   const cabin = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 33*zoom, 24*zoom, 12*zoom ), 
     [
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carBackTexture } ),
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carFrontTexture } ),
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carRightSideTexture } ),
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true, map: carLeftSideTexture } ),
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true } ), // top
-      new THREE.MeshPhongMaterial( { color: 0xcccccc, flatShading: true } ) // bottom
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true, map: carBackTexture } ),
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true, map: carFrontTexture } ),
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true, map: carRightSideTexture } ),
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true, map: carLeftSideTexture } ),
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ), // top
+      new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ),// bottom
     ]
+    
   );
   cabin.position.x = 6*zoom;
   cabin.position.z = 25.5*zoom;
   cabin.castShadow = true;
   cabin.receiveShadow = true;
   car.add( cabin );
+
+  const undercar = new underCar(color);
+  undercar.position.z =8*zoom;
+  car.add( undercar );
+
+  const leftsideunderCar = new SideunderCar(color)
+  leftsideunderCar.position.z = 8*zoom;
+  leftsideunderCar.position.x = -26*zoom;
+  car.add(leftsideunderCar);
+
+  const rightsideunderCar = new SideunderCar(color)
+  rightsideunderCar.position.z = 8*zoom;
+  rightsideunderCar.position.x = 26*zoom;
+  car.add(rightsideunderCar);
+
+
+
+  const underundercar = new underunderCar();
+  underundercar.position.z = 6*zoom;
+  car.add( underundercar );
+
+  const leftsideunderunderCar = new SideunderunderCar()
+  leftsideunderunderCar.position.z = 6*zoom;
+  leftsideunderunderCar.position.x = -28*zoom;
+  car.add(leftsideunderunderCar);
+
+  const rightsideunderunderCar = new SideunderunderCar()
+  rightsideunderunderCar.position.z = 6*zoom;
+  rightsideunderunderCar.position.x = 28*zoom;
+  car.add(rightsideunderunderCar);
+
+  const stripe = new Stripe(color);
+  stripe.position.z = 13*zoom;
+  car.add( stripe );
+
+  const wingmirror = new WingMirror(color);
+  wingmirror.position.z = 16.5*zoom;
+  wingmirror.position.x = -4*zoom;
+  car.add( wingmirror );
   
+
   const frontWheel = new Wheel();
   frontWheel.position.x = -18*zoom;
   car.add( frontWheel );
@@ -192,16 +312,64 @@ function Car() {
   backWheel.position.x = 18*zoom;
   car.add( backWheel );
 
+  const frontInWheel = new InWheel();
+  frontInWheel.position.x = -18*zoom;
+  car.add( frontInWheel );
+
+  const backInWheel = new InWheel();
+  backInWheel.position.x = 18*zoom;
+  car.add( backInWheel );
+
   car.castShadow = true;
   car.receiveShadow = false;
   
   return car;  
 }
 
+function UnderCabin() {
+  const undercabin = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 10*zoom, 23*zoom, 4*zoom ), 
+    new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading: true } ) 
+  );
+  undercabin.position.z = 6*zoom;
+  undercabin.castShadow = true;
+  return undercabin;
+}
+
+function UpUnderCabin() {
+  const upundercabin = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 7*zoom, 23*zoom, 4*zoom ), 
+    new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading: true } ) 
+  );
+  upundercabin.position.z = 6*zoom;
+  upundercabin.castShadow = true;
+  return upundercabin;
+}
+
+function WindowCabin() {
+  const window = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 10*zoom, 30.5*zoom, 9*zoom ), 
+    new THREE.MeshLambertMaterial( { color: 0x000000, flatShading: true } ) 
+  );
+  window.position.z = 6*zoom;
+  return window;
+}
+
+function WingTruckMirror(b){
+  const mirrorTruckColor = new THREE.Color(b);
+  mirrorTruckColor.multiplyScalar(0.8); // Делаем цвет на 20% темнее
+
+  const wingtruckmirror = new THREE.Mesh( 
+    new THREE.BoxBufferGeometry( 4*zoom, 37*zoom, 6*zoom ), 
+    new THREE.MeshLambertMaterial( { color:mirrorTruckColor, flatShading: true } ) 
+  );
+  wingtruckmirror.position.z = 6*zoom;
+  return wingtruckmirror;
+}
+
 function Truck() {
   const truck = new THREE.Group();
-  const color = vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
-
+  const color = TruckColors[Math.floor(Math.random() * TruckColors.length)];
 
   const base = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 100*zoom, 25*zoom, 5*zoom ), 
@@ -212,13 +380,35 @@ function Truck() {
 
   const cargo = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 75*zoom, 35*zoom, 40*zoom ), 
-    new THREE.MeshPhongMaterial( { color: 0xb4c6fc, flatShading: true } )
+    new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } )
   );
   cargo.position.x = 15*zoom;
   cargo.position.z = 30*zoom;
   cargo.castShadow = true;
   cargo.receiveShadow = true;
   truck.add(cargo)
+
+  const wingtruckmirror = new WingTruckMirror(color);
+  wingtruckmirror.position.x = -44*zoom;
+  wingtruckmirror.position.z = 16*zoom;
+  // wingtruckmirror.position.y = *zoom;
+  truck.add( wingtruckmirror );
+
+
+  const undercabin = new UnderCabin();
+  undercabin.position.x = -32*zoom;
+  undercabin.position.z = 37*zoom;
+  truck.add( undercabin );
+
+  const upundercabin = new UpUnderCabin();
+  upundercabin.position.x = -29*zoom;
+  upundercabin.position.z = 41*zoom;
+  truck.add( upundercabin );
+
+  const window = new WindowCabin();
+  window.position.x = -48*zoom;
+  window.position.z = 25*zoom;
+  truck.add( window );
 
   const cabin = new THREE.Mesh(
     new THREE.BoxBufferGeometry( 25*zoom, 30*zoom, 30*zoom ), 
@@ -248,6 +438,18 @@ function Truck() {
   const backWheel = new Wheel();
   backWheel.position.x = 30*zoom;
   truck.add( backWheel );
+
+  const frontInWheel = new InWheel();
+  frontInWheel.position.x = -38*zoom;
+  truck.add( frontInWheel );
+
+  const middleInWheel = new InWheel();
+  middleInWheel.position.x = -10*zoom;
+  truck.add( middleInWheel );
+
+  const backInWheel = new InWheel();
+  backInWheel.position.x = 30*zoom;
+  truck.add( backInWheel );
 
   return truck;  
 }
@@ -291,6 +493,7 @@ function Rock() {
           new THREE.MeshPhongMaterial({ color: colors[index], flatShading: true })
       );
       cube.position.z = (sizes.length - index) * zoom; // Поднимаем каждый куб по оси Z
+      cube.castShadow = true;
       rock.add(cube);
   });
 
@@ -660,7 +863,7 @@ function Lane(index) {
         return vechicle;
       })
 
-      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)] + (this.index/100);
       break;
     }
     case 'truck' : {
@@ -681,7 +884,7 @@ function Lane(index) {
         return vechicle;
       })
 
-      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)]+ (this.index/100);
       break;
     }
   }
