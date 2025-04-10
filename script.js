@@ -16,7 +16,7 @@ camera.position.y = initialCameraPositionY;
 camera.position.x = initialCameraPositionX;
 camera.position.z = distance;
 
-const zoom = 2;
+const zoom = 3;
 
 const chickenSize = 15;
 
@@ -93,7 +93,7 @@ backLight.position.set(200, 200, 50);
 backLight.castShadow = true;
 scene.add(backLight)
 
-const laneTypes = ['car', 'truck', 'forest'];
+const laneTypes = ['car', 'truck', 'forest','railway'];
 const laneSpeeds = [2.5, 3, 3.5];
 const CarColors = [0xbbf36a, 0xff7035, 0xfdfe5e,0xb08aff];
 const TruckColors = [0x36a7e9, 0xe82e49];
@@ -148,7 +148,7 @@ function Texture(width, height, rects) {
 
 function Wheel() {
   const wheel = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 13*zoom, 33*zoom, 12*zoom ), 
+    new THREE.BoxBufferGeometry( 13*zoom, 33*zoom, 12*zoom ),
     new THREE.MeshLambertMaterial( { color: 0x333333, flatShading: true } ) 
   );
   wheel.position.z = 6*zoom;
@@ -159,9 +159,9 @@ function Stripe(a) {
   const stripeColor = new THREE.Color(a);
   stripeColor.multiplyScalar(0.8); // Делаем цвет на 30% темнее
 
-  const stripe = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 61*zoom, 10*zoom, 15*zoom ), 
-    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  const stripe = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 61*zoom, 10*zoom, 15*zoom ),
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } )
   );
   stripe.position.z = 6*zoom;
   return stripe;
@@ -171,9 +171,9 @@ function underCar(a) {
   const stripeColor = new THREE.Color(a);
   stripeColor.multiplyScalar(0.6); // Делаем цвет на 30% темнее
 
-  const undercar = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 23*zoom, 32*zoom, 2*zoom ), 
-    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  const undercar = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 23*zoom, 32*zoom, 2*zoom ),
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } )
   );
   undercar.position.z = 6*zoom;
   return undercar;
@@ -183,27 +183,27 @@ function SideunderCar(a) {
   const stripeColor = new THREE.Color(a);
   stripeColor.multiplyScalar(0.6); // Делаем цвет на 30% темнее
 
-  const sideundercar = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry(10*zoom, 32*zoom, 2*zoom ), 
-    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  const sideundercar = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(10*zoom, 32*zoom, 2*zoom ),
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } )
   );
   sideundercar.position.z = 6*zoom;
   return sideundercar;
 }
 
 function underunderCar() {
-  const underundercar = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 23*zoom, 32*zoom, 2*zoom ), 
-    new THREE.MeshLambertMaterial( { color:0x454062, flatShading: true } ) 
+  const underundercar = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 23*zoom, 32*zoom, 2*zoom ),
+    new THREE.MeshLambertMaterial( { color:0x454062, flatShading: true } )
   );
   underundercar.position.z = 6*zoom;
   return underundercar;
 }
 
 function SideunderunderCar() {
-  const sideunderundercar = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 7*zoom, 32*zoom, 2*zoom ), 
-    new THREE.MeshLambertMaterial( { color:0x454062, flatShading: true } ) 
+  const sideunderundercar = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 7*zoom, 32*zoom, 2*zoom ),
+    new THREE.MeshLambertMaterial( { color:0x454062, flatShading: true } )
   );
   sideunderundercar.position.z = 6*zoom;
   return sideunderundercar;
@@ -214,9 +214,9 @@ function WingMirror(a){
   const stripeColor = new THREE.Color(a);
   stripeColor.multiplyScalar(0.8); // Делаем цвет на 20% темнее
 
-  const stripe = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 8*zoom, 37*zoom, 5*zoom ), 
-    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } ) 
+  const stripe = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 8*zoom, 37*zoom, 5*zoom ),
+    new THREE.MeshLambertMaterial( { color:stripeColor, flatShading: true } )
   );
   stripe.position.z = 6*zoom;
   return stripe;
@@ -225,9 +225,9 @@ function WingMirror(a){
 
 function InWheel()
 {
-  const inwheel = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 5*zoom, 33.5*zoom, 5*zoom ), 
-    new THREE.MeshLambertMaterial( { color: 0xc1c8fc, flatShading: true } ) 
+  const inwheel = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 5*zoom, 33.5*zoom, 5*zoom ),
+    new THREE.MeshLambertMaterial( { color: 0xc1c8fc, flatShading: true } )
   );
   inwheel.position.z = 6*zoom;
   return inwheel;
@@ -256,7 +256,7 @@ function Car() {
       new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ), // top
       new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } ),// bottom
     ]
-    
+
   );
   cabin.position.x = 6*zoom;
   cabin.position.z = 25.5*zoom;
@@ -302,7 +302,7 @@ function Car() {
   wingmirror.position.z = 16.5*zoom;
   wingmirror.position.x = -4*zoom;
   car.add( wingmirror );
-  
+
 
   const frontWheel = new Wheel();
   frontWheel.position.x = -18*zoom;
@@ -327,9 +327,9 @@ function Car() {
 }
 
 function UnderCabin() {
-  const undercabin = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 10*zoom, 23*zoom, 4*zoom ), 
-    new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading: true } ) 
+  const undercabin = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 10*zoom, 23*zoom, 4*zoom ),
+    new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading: true } )
   );
   undercabin.position.z = 6*zoom;
   undercabin.castShadow = true;
@@ -337,9 +337,9 @@ function UnderCabin() {
 }
 
 function UpUnderCabin() {
-  const upundercabin = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 7*zoom, 23*zoom, 4*zoom ), 
-    new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading: true } ) 
+  const upundercabin = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 7*zoom, 23*zoom, 4*zoom ),
+    new THREE.MeshLambertMaterial( { color: 0xffffff, flatShading: true } )
   );
   upundercabin.position.z = 6*zoom;
   upundercabin.castShadow = true;
@@ -347,9 +347,9 @@ function UpUnderCabin() {
 }
 
 function WindowCabin() {
-  const window = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 10*zoom, 30.5*zoom, 9*zoom ), 
-    new THREE.MeshLambertMaterial( { color: 0x000000, flatShading: true } ) 
+  const window = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 10*zoom, 30.5*zoom, 9*zoom ),
+    new THREE.MeshLambertMaterial( { color: 0x000000, flatShading: true } )
   );
   window.position.z = 6*zoom;
   return window;
@@ -359,9 +359,9 @@ function WingTruckMirror(b){
   const mirrorTruckColor = new THREE.Color(b);
   mirrorTruckColor.multiplyScalar(0.8); // Делаем цвет на 20% темнее
 
-  const wingtruckmirror = new THREE.Mesh( 
-    new THREE.BoxBufferGeometry( 4*zoom, 37*zoom, 6*zoom ), 
-    new THREE.MeshLambertMaterial( { color:mirrorTruckColor, flatShading: true } ) 
+  const wingtruckmirror = new THREE.Mesh(
+    new THREE.BoxBufferGeometry( 4*zoom, 37*zoom, 6*zoom ),
+    new THREE.MeshLambertMaterial( { color:mirrorTruckColor, flatShading: true } )
   );
   wingtruckmirror.position.z = 6*zoom;
   return wingtruckmirror;
@@ -451,7 +451,7 @@ function Truck() {
   backInWheel.position.x = 30*zoom;
   truck.add( backInWheel );
 
-  return truck;  
+  return truck;
 }
 
 
@@ -492,15 +492,12 @@ function Rock() {
           new THREE.BoxBufferGeometry(size * zoom, size * zoom, size * zoom),
           new THREE.MeshPhongMaterial({ color: colors[index], flatShading: true })
       );
-      cube.position.z = (sizes.length - index) * zoom; // Поднимаем каждый куб по оси Z
+      cube.position.z = 5 * zoom; // Поднимаем камень над землей
       cube.castShadow = true;
+      cube.receiveShadow = true;
       rock.add(cube);
+      //cube.position.z = (sizes.length - index) * zoom; // Поднимаем каждый куб по оси Z
   });
-
-  rock.position.z = 5 * zoom; // Поднимаем камень над землей
-  rock.castShadow = true;
-  rock.receiveShadow = true;
-
   return rock;
 }
 
@@ -675,6 +672,68 @@ function Chicken() {
   return chicken;  
 }
 
+function rzd() {
+  const rzd = new THREE.Group();
+
+  // Создаем основные секции дороги
+  const createSection = color => new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(boardWidth * zoom, positionWidth * zoom),
+      new THREE.MeshPhongMaterial({ color })
+  );
+
+  //Левая полоса
+  const leftLane = createSection(0x454A59); // Цвет левой полосы
+  leftLane.position.x = -boardWidth * zoom / 4; // Смещаем левую полосу влево
+  leftLane.position.z = 2;
+  leftLane.receiveShadow = true;
+  rzd.add(leftLane);
+
+  // Правая полоса
+  const rightLane = createSection(0x454A59); // Цвет правой полосы
+  rightLane.position.x = boardWidth * zoom / 4; // Смещаем правую полосу вправо
+  rightLane.position.z = 2;
+  rightLane.receiveShadow = true;
+  rzd.add(rightLane);
+
+  // Добавляем пунктирную разделительную полосу
+  const shpali = new THREE.Group(); // Группа для пунктирных сегментов
+  const segmentLength = 35 * zoom; // Длина одного сегмента
+  const gapLength = 15 * zoom; // Расстояние между сегментами
+  const totalLength = boardWidth * zoom; // Полная длина разделительной полосы
+
+  for (let x = -2* boardWidth * zoom; x < 2* boardWidth * zoom; x += gapLength) {
+    const segment = new THREE.Mesh(
+        new THREE.BoxBufferGeometry( 2*zoom, segmentLength, 2*zoom ),
+        new THREE.MeshPhongMaterial( { color: 0x4d4c4c, flatShading: true } )
+    );
+    segment.position.x = x;
+    segment.position.y = 0; // Располагаем сегмент
+    segment.position.z = 3; // Поднимаем немного над дорогой
+    shpali.add(segment);
+  }
+
+  const segmentl = new THREE.Mesh(
+      new THREE.BoxBufferGeometry( 2 * boardWidth * zoom , 2*zoom,2*zoom), // Размер сегмента
+      new THREE.MeshPhongMaterial({ color: 0x4d4c4c, flatShading: true}) // Цвет
+  );
+  segmentl.position.x = 0;
+  segmentl.position.y = 17; // Располагаем сегмент
+  segmentl.position.z = 3; // Поднимаем немного над дорогой
+  shpali.add(segmentl);
+
+  const segmentr = new THREE.Mesh(
+      new THREE.BoxBufferGeometry( 2 * boardWidth * zoom , 2*zoom,2*zoom), // Размер сегмента
+      new THREE.MeshPhongMaterial({ color: 0x4d4c4c, flatShading: true}) // Цвет
+  );
+  segmentr.position.x = 0;
+  segmentr.position.y = -17; // Располагаем сегмент
+  segmentr.position.z = 3; // Поднимаем немного над дорогой
+  shpali.add(segmentr);
+
+  rzd.add(shpali); // Добавляем пунктирную полосу в группу дороги
+
+  return rzd;
+}
 
 function Road() {
   const road = new THREE.Group();
@@ -863,7 +922,7 @@ function Lane(index) {
         return vechicle;
       })
 
-      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)] + (this.index/100);
+      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)] + (this.index / 50);
       break;
     }
     case 'truck' : {
@@ -884,7 +943,12 @@ function Lane(index) {
         return vechicle;
       })
 
-      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)]+ (this.index/100);
+      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)]  + (this.index / 50) ;
+      break;
+    }
+    case 'railway' : {
+      this.mesh = new rzd();
+      this.direction = Math.random() >= 0.5;
       break;
     }
   }
