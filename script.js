@@ -861,38 +861,51 @@ function Yellow_Up() {
 function Morda() {
   const morda = new THREE.Group();
   const upside_morda = new THREE.Mesh(
-    new THREE.BoxBufferGeometry(6 * zoom, 33 * zoom, 15 * zoom),
+    new THREE.BoxBufferGeometry(10 * zoom, 30 * zoom, 10 * zoom),
     new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true })
   );
-  upside_morda.position.z = 7 * zoom;
-  upside_morda.position.x = -50 * zoom;
+  upside_morda.position.z = 10 * zoom;
+  upside_morda.position.x = -48 * zoom;
   morda.add(upside_morda);
 
   const blue_morda = new THREE.Mesh(
-    new THREE.BoxBufferGeometry(7 * zoom, 33 * zoom,6 * zoom),
+    new THREE.BoxBufferGeometry(9 * zoom, 31 * zoom,11 * zoom),
     new THREE.MeshPhongMaterial({ color: 0x6fddff, flatShading: true })
   );
-  blue_morda.position.z = 15 * zoom;
+  blue_morda.position.z = 25 * zoom;
   blue_morda.position.x = -50 * zoom;
   morda.add(blue_morda);;
 
   const yellow_back_morda = new THREE.Mesh(
-    new THREE.BoxBufferGeometry(3 * zoom, 33 * zoom, 30 * zoom),
+    new THREE.BoxBufferGeometry(4 * zoom, 30 * zoom, 35 * zoom),
     new THREE.MeshPhongMaterial({ color: 0xffff85, flatShading: true })
   );
-  yellow_back_morda.position.z = 105 * zoom;
+  yellow_back_morda.position.z = 32.5 * zoom;
   yellow_back_morda.position.x = -45 * zoom;
   morda.add(yellow_back_morda);
 
   const yellow_upside = new Yellow_Upside();
   yellow_upside.position.x = -50 * zoom;
-  yellow_upside.position.z = 20 * zoom;
+  yellow_upside.position.z = 33 * zoom;
   morda.add(yellow_upside);
 
+  const yellow_upside_upside = new Yellow_Upside();
+  yellow_upside_upside.position.x = -50 * zoom;
+  yellow_upside_upside.position.z = 17 * zoom;
+  morda.add(yellow_upside_upside);
+
   const yellow_up = new Yellow_Up();
-  yellow_up.position.x = -45 * zoom;
-  yellow_up.position.z = 20 * zoom;
+  yellow_up.position.x = -50 * zoom;
+  yellow_up.position.z = 45 * zoom;
   morda.add(yellow_up);
+
+  const scepka = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(10 * zoom, 6 * zoom,6 * zoom),
+    new THREE.MeshPhongMaterial({ color: 0x000000, flatShading: true })
+  );
+  scepka.position.z = 10 * zoom;
+  scepka.position.x = -50 * zoom;
+  morda.add(scepka);;
 
   return morda;
 }
@@ -909,6 +922,7 @@ function Train() {
 
   const morda_face = new Morda();
   morda_face.position.x = 150 * zoom;
+  morda_face.rotation.z = Math.PI;
   train.add(morda_face)
 
 
