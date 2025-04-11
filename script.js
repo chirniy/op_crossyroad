@@ -595,6 +595,52 @@ function Side_Wagon() {
   return side_wagon;
 }
 
+function Up_Wagon() {
+  const up_wagon = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(25 * zoom, 15 * zoom, 5 * zoom),
+    new THREE.MeshLambertMaterial({ color: 0x8a9bb7, flatShading: true })
+  );
+  up_wagon.position.z = 30 * zoom;
+  return up_wagon;
+}
+
+function Black_Block() {
+  const black_wagon = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(8 * zoom, 8 * zoom, 4 * zoom),
+    new THREE.MeshLambertMaterial({ color: 0x43443f, flatShading: true })
+  );
+  black_wagon.position.z = 30 * zoom;
+  return black_wagon;
+}
+
+function Vert_Black_Block() {
+  const vert_up_wagon = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(3 * zoom, 8 * zoom, 8 * zoom),
+    new THREE.MeshLambertMaterial({ color: 0x43443f, flatShading: true })
+  );
+  vert_up_wagon.position.z = 30 * zoom;
+  return vert_up_wagon;
+}
+
+function Gorizontal_Black_Block() {
+  const gorizontal_black_block =  new THREE.Mesh(
+    new THREE.BoxBufferGeometry(4 * zoom, 16 * zoom, 4 * zoom),
+    new THREE.MeshLambertMaterial({ color: 0x43443f, flatShading: true })
+  );
+  gorizontal_black_block.position.z = 30 * zoom;
+  return gorizontal_black_block;
+}
+
+function Blue_Block() {
+  const up_wagon = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(8 * zoom, 8 * zoom, 4 * zoom),
+    new THREE.MeshLambertMaterial({ color: 0x8a9bb7, flatShading: true })
+  );
+  up_wagon.position.z = 30 * zoom;
+  return up_wagon;
+}
+
+
 function Wagon() {
   const wagon = new THREE.Group();
 
@@ -606,6 +652,52 @@ function Wagon() {
   main.castShadow = true;
   main.receiveShadow = true;
   wagon.add(main);
+
+  const black_block_1 = Black_Block();
+  black_block_1.position.z = 55 * zoom;
+  black_block_1.position.x = 50 * zoom;
+  black_block_1.position.y = 4 * zoom;
+  wagon.add(black_block_1);
+
+  const black_block_2 = Black_Block();
+  black_block_2.position.z = 63 * zoom;
+  black_block_2.position.x = -40 * zoom;
+  black_block_2.position.y = -4 * zoom;
+  wagon.add(black_block_2);
+
+  const vert_black_block = Vert_Black_Block();
+  vert_black_block.position.z = 61 * zoom;
+  vert_black_block.position.x = -43 * zoom;
+  vert_black_block.position.y = -4 * zoom;
+  wagon.add(vert_black_block);
+
+  const gorizontal_black_block = Gorizontal_Black_Block();
+  gorizontal_black_block.position.z = 63 * zoom;
+  gorizontal_black_block.position.x = -35 * zoom;
+  gorizontal_black_block.position.y = -4 * zoom;
+  wagon.add(gorizontal_black_block);
+
+  const blue_block_1 = Blue_Block();
+  blue_block_1.position.z = 59 * zoom;
+  blue_block_1.position.x = 50 * zoom;
+  blue_block_1.position.y = 4 * zoom;
+  wagon.add(blue_block_1);
+
+  const blue_block_2 = Blue_Block();
+  blue_block_2.position.z = 55 * zoom;
+  blue_block_2.position.x = -45 * zoom;
+  blue_block_2.position.y = -4 * zoom;
+  wagon.add(blue_block_2);
+
+  const up_wagon_1 = Up_Wagon();
+  up_wagon_1.position.z = 55 * zoom;
+  up_wagon_1.position.x = 22.5 * zoom;
+  wagon.add(up_wagon_1);
+
+  const up_wagon_2 = Up_Wagon();
+  up_wagon_2.position.z = 55 * zoom;
+  up_wagon_2.position.x = -22.5 * zoom;
+  wagon.add(up_wagon_2);
 
   const mid_wagon = Mid_Wagon();
   mid_wagon.position.z = 33 * zoom;
@@ -720,7 +812,6 @@ function Wagon() {
 }
 
 
-
 function Locomotive() {
   const locomotive = new THREE.Group();
 
@@ -732,6 +823,52 @@ function Locomotive() {
   main.castShadow = true;
   main.receiveShadow = true;
   locomotive.add(main);
+
+  const black_block_1 = Black_Block();
+  black_block_1.position.z = 55 * zoom;
+  black_block_1.position.x = 50 * zoom;
+  black_block_1.position.y = 4 * zoom;
+  locomotive.add(black_block_1);
+
+  const black_block_2 = Black_Block();
+  black_block_2.position.z = 63 * zoom;
+  black_block_2.position.x = -40 * zoom;
+  black_block_2.position.y = -4 * zoom;
+  locomotive.add(black_block_2);
+
+  const vert_black_block = Vert_Black_Block();
+  vert_black_block.position.z = 61 * zoom;
+  vert_black_block.position.x = -43 * zoom;
+  vert_black_block.position.y = -4 * zoom;
+  locomotive.add(vert_black_block);
+
+  const gorizontal_black_block = Gorizontal_Black_Block();
+  gorizontal_black_block.position.z = 63 * zoom;
+  gorizontal_black_block.position.x = -35 * zoom;
+  gorizontal_black_block.position.y = -4 * zoom;
+  locomotive.add(gorizontal_black_block);
+
+  const blue_block_1 = Blue_Block();
+  blue_block_1.position.z = 59 * zoom;
+  blue_block_1.position.x = 50 * zoom;
+  blue_block_1.position.y = 4 * zoom;
+  locomotive.add(blue_block_1);
+
+  const blue_block_2 = Blue_Block();
+  blue_block_2.position.z = 55 * zoom;
+  blue_block_2.position.x = -45 * zoom;
+  blue_block_2.position.y = -4 * zoom;
+  locomotive.add(blue_block_2);
+
+  const up_wagon_1 = Up_Wagon();
+  up_wagon_1.position.z = 55 * zoom;
+  up_wagon_1.position.x = 22.5 * zoom;
+  locomotive.add(up_wagon_1);
+
+  const up_wagon_2 = Up_Wagon();
+  up_wagon_2.position.z = 55 * zoom;
+  up_wagon_2.position.x = -22.5 * zoom;
+  locomotive.add(up_wagon_2);
 
   const mid_wagon = Mid_Wagon();
   mid_wagon.position.z = 34 * zoom;
