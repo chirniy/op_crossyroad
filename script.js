@@ -1600,21 +1600,23 @@ function Lane(index) {
     }
     case 'railway': {
       this.mesh = new rzd();
-      this.direction = Math.random() >= 0.5; // Случайное направление движения
-      const occupiedPositions = new Set(); // Занятые позиции
-      this.trains = [1].map(() => { // Один поезд на полосу
-        const train = new Train(); // Создаем поезд
-        let position;
-        do {
-          position = Math.floor(Math.random() * columns / 2); // Выбираем случайную позицию
-        } while (occupiedPositions.has(position));
-        occupiedPositions.add(position);
-        train.position.x = (position * positionWidth * 2 + positionWidth / 2) * zoom - boardWidth * zoom / 2; // Позиционируем поезд
-        if (!this.direction) train.rotation.z = Math.PI; // Если движение в обратном направлении, поворачиваем поезд
-        this.mesh.add(train); // Добавляем поезд в сцену
-        return train;
-      });
-      this.speed = laneSpeeds[Math.floor(Math.random() * laneSpeeds.length)] + (this.index / 50); // Скорость поезда
+      this.direction = Math.random() >= 0.5; // Случайное направление
+      this.trains = []; // массив поездов
+      this.speed = 60;
+      interval = Math.floor(Math.random() * (13 - 8 + 1)) + 8;;
+
+      // Интервал появления поезда
+      setInterval(() => {
+        const train = new Train();
+        // Появление с края экрана, а не случайная позиция
+        train.position.x = this.direction
+            ? boardWidth * zoom / 2 + positionWidth * 2 * zoom // справа
+            : -boardWidth * zoom / 2 - positionWidth * 2 * zoom; // слева
+        if (!this.direction) train.rotation.z = Math.PI;
+        this.mesh.add(train);
+        this.trains.push(train);
+      }, interval*1000); // Новый поезд каждые 8 секунд
+
       break;
     }
   }
@@ -1648,7 +1650,7 @@ window.addEventListener("keydown", event => {
       if (event.keyCode === 32) { // 32 — код клавиши пробела
           retryGame(); // Вызываем функцию для перезапуска игры
       }    
-      return retryGame();
+      return;
   }
 
   // Остальная логика управления курицей
@@ -1750,20 +1752,24 @@ function animate(timestamp) {
 
     // Анимация поездов
     if (lane.type === 'railway') {
-      const aBitBeforeTheBeginingOfLane = -boardWidth * zoom / 2 - positionWidth * 2 * zoom;
-      const aBitAfterTheEndOFLane = boardWidth * zoom / 2 + positionWidth * 2 * zoom;
-      lane.trains.forEach(train => {
+      const outLeft = -boardWidth * zoom / 2 - positionWidth * 4 * zoom;
+      const outRight = boardWidth * zoom / 2 + positionWidth * 4 * zoom;
+
+      lane.trains = lane.trains.filter(train => {
         if (lane.direction) {
-          train.position.x =
-            train.position.x < aBitBeforeTheBeginingOfLane
-              ? aBitAfterTheEndOFLane
-              : (train.position.x -= lane.speed / 16 * delta);
+          train.position.x -= lane.speed / 16 * delta;
+          if (train.position.x < outLeft) {
+            lane.mesh.remove(train); // удалить из сцены
+            return false; // удалить из массива
+          }
         } else {
-          train.position.x =
-            train.position.x > aBitAfterTheEndOFLane
-              ? aBitBeforeTheBeginingOfLane
-              : (train.position.x += lane.speed / 16 * delta);
+          train.position.x += lane.speed / 16 * delta;
+          if (train.position.x > outRight) {
+            lane.mesh.remove(train); // удалить из сцены
+            return false;
+          }
         }
+        return true; // оставить в массиве
       });
     }
   });
