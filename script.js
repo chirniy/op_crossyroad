@@ -1168,7 +1168,6 @@ function Rock() {
   rock.position.z = 5 * zoom; // Поднимаем камень над землей
   rock.castShadow = true;
   rock.receiveShadow = true;
-
   return rock;
 }
 
@@ -1405,6 +1404,7 @@ function rzd() {
   segmentr.position.z = 25; // Поднимаем немного над дорогой
   segmentr.castShadow = true;
   segmentr.receiveShadow = false;
+
   shpali.add(segmentr);
 
   rzd.add(shpali); // Добавляем пунктирную полосу в группу дороги
@@ -1616,7 +1616,6 @@ function Lane(index) {
         this.mesh.add(train);
         this.trains.push(train);
       }, interval*1000); // Новый поезд каждые 8 секунд
-
       break;
     }
   }
