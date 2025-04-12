@@ -1,4 +1,6 @@
-const counterDOM = document.getElementById('counter');  
+const counterDOM = document.getElementById('counter');
+const finalScoreDom = document.getElementById("finalScore");
+let score = 0;
 const endDOM = document.getElementById('end');  
 
 const scene = new THREE.Scene();
@@ -35,6 +37,8 @@ let startMoving;
 let moves;
 let stepStartTimestamp;
 
+let countedLanes = 0;
+
 let gameOver = false;
 let isFlattened = false;
 
@@ -60,6 +64,24 @@ const addLane = () => {
   lane.mesh.position.y = index*positionWidth*zoom;
   scene.add(lane.mesh);
   lanes.push(lane);
+
+  const maxLanes = 20;
+  // Удаляем старую линию
+  if (lanes.length > maxLanes) {
+    const removedLane = lanes.shift();
+    scene.remove(removedLane.mesh);
+
+    // Сдвигаем все лейны вниз (визуально)
+    lanes.forEach(lane => {
+      lane.mesh.position.y -= positionWidth * zoom;
+    });
+
+    // Сдвигаем курицу вниз (визуально)
+    chicken.position.y -= positionWidth * zoom;
+
+    // Обновляем логическую позицию
+    currentLane--;
+  }
 }
 
 const chicken = new Chicken();
@@ -1517,7 +1539,6 @@ function Grass() {
 function Lane(index) {
   this.index = index;
   this.type = index <= 0 ? 'field' : laneTypes[Math.floor(Math.random()*laneTypes.length)];
-
   switch(this.type) {
     case 'field': {
       this.type = 'field';
@@ -1640,6 +1661,9 @@ function retryGame() {
   endDOM.classList.remove('show');
   gameOver = false;
   isFlattened = false;
+  countedLanes = 0;
+  score = 0;
+  counterDOM.innerHTML = 0;
   chicken.scale.set(1, 1, 1); // Восстанавливаем исходный размер курицы
 }
 
@@ -1833,12 +1857,16 @@ function animate(timestamp) {
       switch (moves[0]) {
         case 'forward': {
           currentLane++;
-          counterDOM.innerHTML = currentLane;
+          countedLanes += 1;
+          if (countedLanes > counterDOM.innerHTML) {
+            counterDOM.innerHTML = countedLanes;
+            score = countedLanes;
+          }
           break;
         }
         case 'backward': {
           currentLane--;
-          counterDOM.innerHTML = currentLane;
+          countedLanes -= 1;
           break;
         }
         case 'left': {
@@ -1871,6 +1899,8 @@ function animate(timestamp) {
           setTimeout(() => {
             endDOM.classList.add('show');
           }, 1000);
+          finalScoreDom.innerText = `Your score: ${score}`;
+          console.log("Final score shown:", score);
           gameOver = true;
           isFlattened = true;
           chicken.scale.set(1, 1, 0.01);
@@ -1886,6 +1916,8 @@ function animate(timestamp) {
         const trainMaxX = train.position.x + trainLength * zoom / 2;
         if (chickenMaxX > trainMinX && chickenMinX < trainMaxX) {
           endDOM.classList.remove('hide');
+          finalScoreDom.innerText = `Your score: ${score}`;
+          console.log("Final score shown:", score);
           setTimeout(() => {
             endDOM.classList.add('show');
           }, 1000);
