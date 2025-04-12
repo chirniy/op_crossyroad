@@ -71,14 +71,14 @@ scene.add(hemiLight)
 const initialDirLightPositionX = -100;
 const initialDirLightPositionY = 0;
 dirLight = new THREE.DirectionalLight(0xe0dbab, 0.6);
-dirLight.position.set(initialDirLightPositionX, initialDirLightPositionY, 200);
+dirLight.position.set(initialDirLightPositionX, initialDirLightPositionY, 300);
 dirLight.castShadow = true;
 dirLight.target = chicken;
 scene.add(dirLight);
 
-dirLight.shadow.mapSize.width = 2048;
-dirLight.shadow.mapSize.height = 2048;
-var d = 500;
+dirLight.shadow.mapSize.width = 4092;
+dirLight.shadow.mapSize.height = 4092;
+var d = 1000;
 dirLight.shadow.camera.left = - d;
 dirLight.shadow.camera.right = d;
 dirLight.shadow.camera.top = d;
@@ -1603,19 +1603,31 @@ function Lane(index) {
       this.direction = Math.random() >= 0.5; // Случайное направление
       this.trains = []; // массив поездов
       this.speed = 60;
-      interval = Math.floor(Math.random() * (13 - 8 + 1)) + 8;;
+      interval = Math.floor(Math.random() * (13 - 8 + 1)) + 8;
+      finterval = Math.floor(Math.random() * (6 - 2 + 1)) + 2;
+
+      const spawnTrain = () => {
+        const train = new Train();
+
+        train.position.x = this.direction
+            ? boardWidth * zoom / 2 + positionWidth * 2 * zoom
+            : -boardWidth * zoom / 2 - positionWidth * 2 * zoom;
+
+        if (!this.direction) train.rotation.z = Math.PI;
+
+        this.mesh.add(train);
+        this.trains.push(train);
+      };
+      setTimeout(()=>{
+        spawnTrain();
+      },finterval*1000);
+
 
       // Интервал появления поезда
       setInterval(() => {
-        const train = new Train();
-        // Появление с края экрана, а не случайная позиция
-        train.position.x = this.direction
-            ? boardWidth * zoom / 2 + positionWidth * 2 * zoom // справа
-            : -boardWidth * zoom / 2 - positionWidth * 2 * zoom; // слева
-        if (!this.direction) train.rotation.z = Math.PI;
-        this.mesh.add(train);
-        this.trains.push(train);
-      }, interval*1000); // Новый поезд каждые 8 секунд
+        spawnTrain()
+      }, interval*1000);// Новый поезд каждые random секунд
+
       break;
     }
   }
