@@ -1445,13 +1445,13 @@ function Road() {
 
   // Левая полоса
   const leftLane = createSection(0x454A59); // Цвет левой полосы
-  leftLane.position.x = -boardWidth * zoom / 4; // Смещаем левую полосу влево
+  leftLane.position.x = -boardWidth * 2 * zoom / 4; // Смещаем левую полосу влево
   leftLane.receiveShadow = true;
   road.add(leftLane);
 
   // Правая полоса
   const rightLane = createSection(0x454A59); // Цвет правой полосы
-  rightLane.position.x = boardWidth * zoom / 4; // Смещаем правую полосу вправо
+  rightLane.position.x = boardWidth * 2 * zoom / 4; // Смещаем правую полосу вправо
   rightLane.receiveShadow = true;
   road.add(rightLane);
 
@@ -1459,7 +1459,7 @@ function Road() {
   const divider = new THREE.Group(); // Группа для пунктирных сегментов
   const segmentLength = 20 * zoom; // Длина одного сегмента
   const gapLength = 10 * zoom; // Расстояние между сегментами
-  const totalLength = boardWidth * zoom; // Полная длина разделительной полосы
+  const totalLength = boardWidth* 3 * zoom; // Полная длина разделительной полосы
 
   for (let x = -totalLength / 2; x < totalLength / 2; x += segmentLength + gapLength) {
     const segment = new THREE.Mesh(
