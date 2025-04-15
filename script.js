@@ -115,7 +115,7 @@ backLight.position.set(200, 200, 50);
 backLight.castShadow = true;
 scene.add(backLight)
 
-const laneTypes = ['car', 'truck', 'forest','railway'];
+const laneTypes = ['car', 'truck', 'forest','railway','water'];
 const laneSpeeds = [2.5, 3, 3.5];
 const CarColors = [0xbbf36a, 0xff7035, 0xfdfe5e,0xb08aff];
 const TruckColors = [0x36a7e9, 0xe82e49];
@@ -1364,6 +1364,33 @@ function Chicken() {
   return chicken;  
 }
 
+function Brevno() {
+  const brevno = new THREE.Group();
+
+  // Создаем ствол (бревно)
+  const trunk = new THREE.Mesh(
+    new THREE.BoxBufferGeometry(15 * zoom, 25 * zoom, 50 * zoom),
+    new THREE.MeshPhongMaterial({ color: 0x703939, flatShading: true })
+  );
+
+  // Поворачиваем ствол на 90 градусов вокруг оси Y, чтобы он лежал на боку
+  trunk.rotation.y = Math.PI / 2;
+
+  // Позиционируем бревно так, чтобы его центр был в начале координат
+  trunk.position.x = 10 * zoom; // Смещаем бревно вдоль оси X
+
+  // Включаем тени для бревна
+  trunk.castShadow = true;
+  trunk.receiveShadow = true;
+
+  // Добавляем бревно в группу
+  brevno.add(trunk);
+
+  return brevno;
+}
+
+
+
 function rzd() {
   const rzd = new THREE.Group();
 
@@ -1373,16 +1400,16 @@ function rzd() {
       new THREE.MeshPhongMaterial({ color })
   );
 
-  //Левая полоса
+  // Левая полоса
   const leftLane = createSection(0x454A59); // Цвет левой полосы
-  leftLane.position.x = -boardWidth * zoom / 4; // Смещаем левую полосу влево
+  leftLane.position.x = -boardWidth * 2 * zoom / 4; // Смещаем левую полосу влево
   leftLane.position.z = 2;
   leftLane.receiveShadow = true;
   rzd.add(leftLane);
 
   // Правая полоса
   const rightLane = createSection(0x454A59); // Цвет правой полосы
-  rightLane.position.x = boardWidth * zoom / 4; // Смещаем правую полосу вправо
+  rightLane.position.x = boardWidth * 2 * zoom / 4; // Смещаем правую полосу вправо
   rightLane.position.z = 2;
   rightLane.receiveShadow = true;
   rzd.add(rightLane);
@@ -1393,10 +1420,10 @@ function rzd() {
   const gapLength = 35 * zoom; // Расстояние между сегментами
   const totalLength = boardWidth * zoom; // Полная длина разделительной полосы
 
-  for (let x = -2* boardWidth * zoom; x < 2* boardWidth * zoom; x += gapLength) {
+  for (let x = -2 * boardWidth * zoom; x < 2 * boardWidth * zoom; x += gapLength) {
     const segment = new THREE.Mesh(
-        new THREE.BoxBufferGeometry( 4*zoom, segmentLength+15, 5*zoom ),
-        new THREE.MeshPhongMaterial( { color: 0x693b3d, flatShading: true } )
+        new THREE.BoxBufferGeometry(4 * zoom, segmentLength + 15, 5 * zoom),
+        new THREE.MeshPhongMaterial({ color: 0x693b3d, flatShading: true })
     );
     segment.position.x = x;
     segment.position.y = 0; // Располагаем сегмент
@@ -1407,31 +1434,124 @@ function rzd() {
   }
 
   const segmentl = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 5 * boardWidth * zoom , 4*zoom,4*zoom), // Размер сегмента
-      new THREE.MeshPhongMaterial({ color: 0x8983a9, flatShading: true}) // Цвет
+      new THREE.BoxBufferGeometry(5 * boardWidth * zoom, 4 * zoom, 4 * zoom), 
+      new THREE.MeshPhongMaterial({ color: 0x8983a9, flatShading: true }) 
   );
   segmentl.position.x = 0;
-  segmentl.position.y = 35; // Располагаем сегмент
-  segmentl.position.z = 25; // Поднимаем немного над дорогой
+  segmentl.position.y = 35; 
+  segmentl.position.z = 25; 
   segmentl.castShadow = true;
   segmentl.receiveShadow = false;
   shpali.add(segmentl);
 
   const segmentr = new THREE.Mesh(
-      new THREE.BoxBufferGeometry( 4 * boardWidth * zoom , 4*zoom,4*zoom), // Размер сегмента
-      new THREE.MeshPhongMaterial({ color: 0x8983a9, flatShading: true}) // Цвет
+      new THREE.BoxBufferGeometry(4 * boardWidth * zoom, 4 * zoom, 4 * zoom), 
+      new THREE.MeshPhongMaterial({ color: 0x8983a9, flatShading: true })
   );
   segmentr.position.x = 0;
-  segmentr.position.y = -35; // Располагаем сегмент
-  segmentr.position.z = 25; // Поднимаем немного над дорогой
+  segmentr.position.y = -35; 
+  segmentr.position.z = 25; 
   segmentr.castShadow = true;
   segmentr.receiveShadow = false;
-
   shpali.add(segmentr);
 
-  rzd.add(shpali); // Добавляем пунктирную полосу в группу дороги
+  rzd.add(shpali);
+
+  function createPole() {
+    const poleGroup = new THREE.Group();
+    const segmentHeight = 5 * zoom; 
+    const totalHeight = 90 * zoom; 
+    const numSegments = totalHeight / segmentHeight;
+    for (let i = 0; i < numSegments; i++) {
+        const segment = new THREE.Mesh(
+            new THREE.BoxBufferGeometry(4 * zoom, 4 * zoom, segmentHeight),
+            new THREE.MeshPhongMaterial({
+                color: Math.floor(i / 3) % 2 === 0 ? 0x812835 : 0xfdfeff,
+                flatShading: true,
+            })
+        );
+        const positionInTriple = i % 3;
+        if (positionInTriple === 2) {
+            segment.material.color.set(0xfdfeff);
+        } else {
+            segment.material.color.set(0x812835);
+        }
+        segment.position.z = i * segmentHeight - totalHeight / 2 + segmentHeight / 2;
+        poleGroup.add(segment);
+    }
+  
+    const lanternSize = 4 * zoom;
+    const lanternColor = 0x3e1217;
+  
+    // Левый фонарь
+    const leftLantern = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(lanternSize, lanternSize, lanternSize),
+      new THREE.MeshPhongMaterial({ color: lanternColor })
+    );
+    leftLantern.position.x = -lanternSize / 2 - 2 * zoom - 2;
+    leftLantern.position.y = -5;
+    leftLantern.position.z = 85;
+    leftLantern.name = 'leftLantern'; // Добавляем имя для идентификации
+    poleGroup.add(leftLantern);
+  
+    // Правый фонарь
+    const rightLantern = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(lanternSize, lanternSize, lanternSize),
+      new THREE.MeshPhongMaterial({ color: lanternColor })
+    );
+    rightLantern.position.x = lanternSize / 2 + 2 * zoom + 2;
+    rightLantern.position.y = -5;
+    rightLantern.position.z = 85;
+    rightLantern.name = 'rightLantern'; // Добавляем имя для идентификации
+    poleGroup.add(rightLantern);
+  
+    const perekladina = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(20 * zoom, 3 * zoom, 7 * zoom), 
+      new THREE.MeshPhongMaterial({ color: 0x000000, flatShading: true })
+    );
+    perekladina.position.z = 100;
+    perekladina.position.y = -10;
+    poleGroup.add(perekladina);
+  
+    poleGroup.position.z = 20;
+    poleGroup.position.y = -55;
+    return poleGroup;
+  }
+
+  const pole_1 = createPole();
+  pole_1.position.x = (-boardWidth * zoom / 3)+50; 
+  rzd.add(pole_1);
+
+  const pole_2 = createPole();
+  pole_2.position.x = (boardWidth * zoom / 3);
+  rzd.add(pole_2);
+
 
   return rzd;
+}
+
+function Water() {
+  const water = new THREE.Group();
+
+  // Создаем основные секции дороги
+  const createSection = color => new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(boardWidth * zoom, positionWidth * zoom),
+    new THREE.MeshPhongMaterial({ color })
+  );
+
+  // Левая полоса
+  const leftLane = createSection(0x85d5f8); // Цвет левой полосы
+  leftLane.position.x = -boardWidth * 2 * zoom / 4; // Смещаем левую полосу влево
+  leftLane.receiveShadow = true;
+  water.add(leftLane);
+
+  // Правая полоса
+  const rightLane = createSection(0x85d5f8); // Цвет правой полосы
+  rightLane.position.x = boardWidth * 2 * zoom / 4; // Смещаем правую полосу вправо
+  rightLane.receiveShadow = true;
+  water.add(rightLane);
+
+  return water;
 }
 
 function Road() {
@@ -1651,6 +1771,28 @@ function Lane(index) {
 
       break;
     }
+
+    case 'water': {
+      this.mesh = new Water();
+      this.direction = Math.random() >= 0.5;
+      this.speed = laneSpeeds[Math.floor(Math.random()*laneSpeeds.length)];
+      this.brevnos = [];
+      
+      // Создаем бревна
+      const brevnoCount = Math.floor(Math.random() * 2) + 2; // 2-3 бревна
+      for (let i = 0; i < brevnoCount; i++) {
+        const brevno = new Brevno();
+        const position = Math.floor(Math.random() * (columns - 3)) + 1;
+        brevno.position.x = (position * positionWidth + positionWidth / 2) * zoom - boardWidth * zoom / 2;
+        if (!this.direction) brevno.rotation.z = Math.PI;
+        this.mesh.add(brevno);
+        this.brevnos.push({
+          mesh: brevno,
+          position: position
+        });
+      }
+      break;
+    }
   }
 }
 
@@ -1758,6 +1900,9 @@ function move(direction) {
   moves.push(direction);
 }
 
+let isOnLog = false;
+let currentLogLane = null;
+
 function animate(timestamp) {
   requestAnimationFrame(animate);
 
@@ -1770,6 +1915,7 @@ function animate(timestamp) {
     if (lane.type === 'car' || lane.type === 'truck') {
       const aBitBeforeTheBeginingOfLane = -boardWidth * zoom / 2 - positionWidth * 2 * zoom;
       const aBitAfterTheEndOFLane = boardWidth * zoom / 2 + positionWidth * 2 * zoom;
+
       lane.vechicles.forEach(vechicle => {
         if (lane.direction) {
           vechicle.position.x =
@@ -1794,30 +1940,111 @@ function animate(timestamp) {
         if (lane.direction) {
           train.position.x -= lane.speed / 16 * delta;
           if (train.position.x < outLeft) {
-            lane.mesh.remove(train); // удалить из сцены
-            return false; // удалить из массива
+            lane.mesh.remove(train);
+            return false;
           }
         } else {
           train.position.x += lane.speed / 16 * delta;
           if (train.position.x > outRight) {
-            lane.mesh.remove(train); // удалить из сцены
+            lane.mesh.remove(train);
             return false;
           }
         }
-        return true; // оставить в массиве
+        return true;
       });
     }
+
+    // Анимация воды и бревен
+    if (lane.type === 'water') {
+      const waterEdgeLeft = -boardWidth * zoom / 2 - positionWidth * 2 * zoom;
+      const waterEdgeRight = boardWidth * zoom / 2 + positionWidth * 2 * zoom;
+  
+      // Обновляем позиции всех бревен
+      lane.brevnos.forEach(brevnoObj => {
+          const brevno = brevnoObj.mesh;
+          if (lane.direction) {
+              brevno.position.x -= lane.speed / 16 * delta;
+              if (brevno.position.x < waterEdgeLeft) {
+                  brevno.position.x = waterEdgeRight;
+              }
+          } else {
+              brevno.position.x += lane.speed / 16 * delta;
+              if (brevno.position.x > waterEdgeRight) {
+                  brevno.position.x = waterEdgeLeft;
+              }
+          }
+      });
+  
+      // Проверяем, находится ли курица на текущей полосе с водой
+      if (currentLane === lane.index && !gameOver) {
+          let onBrevnoNow = false;
+          
+          // Проверяем все бревна на этой полосе
+          lane.brevnos.forEach(brevnoObj => {
+              const brevno = brevnoObj.mesh;
+              const brevnoLeft = brevno.position.x - 30 * zoom;
+              const brevnoRight = brevno.position.x + 30 * zoom;
+              const chickenLeft = chicken.position.x - chickenSize * zoom / 2;
+              const chickenRight = chicken.position.x + chickenSize * zoom / 2;
+              
+              // Если курица находится на этом бревне
+              if (chickenRight > brevnoLeft && chickenLeft < brevnoRight) {
+                  onBrevnoNow = true;
+                  isOnLog = true;
+                  currentLogLane = lane.index;
+                  
+                  // Двигаем курицу вместе с бревном
+                  if (lane.direction) {
+                      chicken.position.x -= lane.speed / 16 * delta;
+                  } else {
+                      chicken.position.x += lane.speed / 16 * delta;
+                  }
+                  
+                  // Двигаем камеру вместе с курицей
+                  camera.position.x = initialCameraPositionX + chicken.position.x;
+                  dirLight.position.x = initialDirLightPositionX + chicken.position.x;
+                  
+                  // Обновляем текущую колонку
+                  currentColumn = Math.floor(
+                      (chicken.position.x + boardWidth * zoom / 2) / (positionWidth * zoom)
+                  );
+                  currentColumn = Math.max(0, Math.min(columns - 1, currentColumn));
+              }
+          });
+  
+          // Проверяем, была ли курица на бревне в предыдущем кадре
+          if (isOnLog && currentLogLane === lane.index && !onBrevnoNow && moves.length === 0) {
+              // Курица сошла с бревна - проверяем, не в воду ли
+              endDOM.classList.remove('hide');
+              finalScoreDom.innerText = `Your score: ${score}`;
+              setTimeout(() => {
+                  endDOM.classList.add('show');
+              }, 100);
+              gameOver = true;
+              isFlattened = true;
+              chicken.scale.set(1, 1, 0.01);
+          }
+  
+          // Сбрасываем флаг, если курица ушла с этой полосы
+          if (currentLane !== lane.index) {
+              isOnLog = false;
+              currentLogLane = null;
+          }
+      }
+  }
   });
 
-  // Логика перемещения курицы (оставляем без изменений)
+  // Логика перемещения курицы
   if (startMoving) {
     stepStartTimestamp = timestamp;
     startMoving = false;
   }
+
   if (stepStartTimestamp) {
     const moveDeltaTime = timestamp - stepStartTimestamp;
     const moveDeltaDistance = Math.min(moveDeltaTime / stepTime, 1) * positionWidth * zoom;
     const jumpDeltaDistance = Math.sin(Math.min(moveDeltaTime / stepTime, 1) * Math.PI) * 8 * zoom;
+
     switch (moves[0]) {
       case 'forward': {
         const positionY = currentLane * positionWidth * zoom + moveDeltaDistance;
@@ -1900,7 +2127,6 @@ function animate(timestamp) {
             endDOM.classList.add('show');
           }, 1000);
           finalScoreDom.innerText = `Your score: ${score}`;
-          console.log("Final score shown:", score);
           gameOver = true;
           isFlattened = true;
           chicken.scale.set(1, 1, 0.01);
@@ -1917,7 +2143,6 @@ function animate(timestamp) {
         if (chickenMaxX > trainMinX && chickenMinX < trainMaxX) {
           endDOM.classList.remove('hide');
           finalScoreDom.innerText = `Your score: ${score}`;
-          console.log("Final score shown:", score);
           setTimeout(() => {
             endDOM.classList.add('show');
           }, 1000);
@@ -1931,4 +2156,5 @@ function animate(timestamp) {
 
   renderer.render(scene, camera);
 }
+
 requestAnimationFrame(animate);
