@@ -1958,7 +1958,7 @@ function animate(timestamp) {
     if (lane.type === 'water') {
       const waterEdgeLeft = -boardWidth * zoom / 2 - positionWidth * 2 * zoom;
       const waterEdgeRight = boardWidth * zoom / 2 + positionWidth * 2 * zoom;
-  
+      
       // Обновляем позиции всех бревен
       lane.brevnos.forEach(brevnoObj => {
           const brevno = brevnoObj.mesh;
@@ -1986,7 +1986,7 @@ function animate(timestamp) {
               const brevnoRight = brevno.position.x + 30 * zoom;
               const chickenLeft = chicken.position.x - chickenSize * zoom / 2;
               const chickenRight = chicken.position.x + chickenSize * zoom / 2;
-              
+  
               // Если курица находится на этом бревне
               if (chickenRight > brevnoLeft && chickenLeft < brevnoRight) {
                   onBrevnoNow = true;
@@ -1999,11 +1999,11 @@ function animate(timestamp) {
                   } else {
                       chicken.position.x += lane.speed / 16 * delta;
                   }
-                  
+  
                   // Двигаем камеру вместе с курицей
                   camera.position.x = initialCameraPositionX + chicken.position.x;
                   dirLight.position.x = initialDirLightPositionX + chicken.position.x;
-                  
+  
                   // Обновляем текущую колонку
                   currentColumn = Math.floor(
                       (chicken.position.x + boardWidth * zoom / 2) / (positionWidth * zoom)
@@ -2012,9 +2012,9 @@ function animate(timestamp) {
               }
           });
   
-          // Проверяем, была ли курица на бревне в предыдущем кадре
-          if (isOnLog && currentLogLane === lane.index && !onBrevnoNow && moves.length === 0) {
-              // Курица сошла с бревна - проверяем, не в воду ли
+          // Проверяем, утонула ли курица
+          if (!onBrevnoNow) {
+              // Курица не на бревне - она тонет
               endDOM.classList.remove('hide');
               finalScoreDom.innerText = `Your score: ${score}`;
               setTimeout(() => {
@@ -2023,12 +2023,6 @@ function animate(timestamp) {
               gameOver = true;
               isFlattened = true;
               chicken.scale.set(1, 1, 0.01);
-          }
-  
-          // Сбрасываем флаг, если курица ушла с этой полосы
-          if (currentLane !== lane.index) {
-              isOnLog = false;
-              currentLogLane = null;
           }
       }
   }
