@@ -1,7 +1,7 @@
 const counterDOM = document.getElementById('counter');
 const finalScoreDom = document.getElementById("finalScore");
 let score = 0;
-const endDOM = document.getElementById('end');  
+const endDOM = document.getElementById('end');
 
 const scene = new THREE.Scene();
 
@@ -59,28 +59,37 @@ const generateLanes = () => [-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9].map
 }).filter((lane) => lane.index >= 0);
 
 const addLane = () => {
-  const index = lanes.length;
-  const lane = new Lane(index);
-  lane.mesh.position.y = index*positionWidth*zoom;
-  scene.add(lane.mesh);
-  lanes.push(lane);
 
   const maxLanes = 20;
   // Удаляем старую линию
   if (lanes.length > maxLanes) {
-    const removedLane = lanes.shift();
-    scene.remove(removedLane.mesh);
+    if (currentLane >= 12) {
+      const index = lanes.length;
+      const lane = new Lane(index);
+      lane.mesh.position.y = index * positionWidth * zoom;
+      scene.add(lane.mesh);
+      lanes.push(lane);
 
-    // Сдвигаем все лейны вниз (визуально)
-    lanes.forEach(lane => {
-      lane.mesh.position.y -= positionWidth * zoom;
-    });
+      const removedLane = lanes.shift();
+      scene.remove(removedLane.mesh);
 
-    // Сдвигаем курицу вниз (визуально)
-    chicken.position.y -= positionWidth * zoom;
+      // Сдвигаем все лейны вниз (визуально)
+      lanes.forEach(lane => {
+        lane.mesh.position.y -= positionWidth * zoom;
+      });
 
-    // Обновляем логическую позицию
-    currentLane--;
+      // Сдвигаем курицу вниз (визуально)
+      chicken.position.y -= positionWidth * zoom;
+
+      // Обновляем логическую позицию
+      currentLane--;
+    }
+  }else{
+    const index = lanes.length;
+    const lane = new Lane(index);
+    lane.mesh.position.y = index*positionWidth*zoom;
+    scene.add(lane.mesh);
+    lanes.push(lane);
   }
 }
 
@@ -115,7 +124,7 @@ backLight.position.set(200, 200, 50);
 backLight.castShadow = true;
 scene.add(backLight)
 
-const laneTypes = ['car', 'truck', 'forest','railway'];
+const laneTypes = ['car', 'truck', 'forest', 'railway', "heroinwater"];
 const laneSpeeds = [2.5, 3, 3.5];
 const CarColors = [0xbbf36a, 0xff7035, 0xfdfe5e,0xb08aff];
 const TruckColors = [0x36a7e9, 0xe82e49];
@@ -1477,6 +1486,60 @@ function Road() {
   return road;
 }
 
+function Log() {
+  const brevno = new THREE.Group();
+
+  // Создаем ствол (бревно)
+  const trunk = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(15 * zoom, 25 * zoom, 50 * zoom),
+      new THREE.MeshPhongMaterial({ color: 0x703939, flatShading: true })
+  );
+
+  // Поворачиваем ствол на 90 градусов вокруг оси Y, чтобы он лежал на боку
+  trunk.rotation.y = Math.PI / 2;
+
+  // Позиционируем бревно так, чтобы его центр был в начале координат
+  trunk.position.x = 10 * zoom; // Смещаем бревно вдоль оси X
+
+  // Включаем тени для бревна
+  trunk.castShadow = true;
+  trunk.receiveShadow = true;
+
+  // Добавляем бревно в группу
+  brevno.add(trunk);
+
+  return brevno;
+}
+
+function heroinWater() {
+  const river = new THREE.Group();
+
+  // Основной фон воды
+  const waterSurface = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(boardWidth * zoom, positionWidth * zoom),
+      new THREE.MeshPhongMaterial({ color: 0x3a9bdc }) // Голубой цвет воды
+  );
+  waterSurface.receiveShadow = true;
+  river.add(waterSurface);
+
+  // Волны или визуальный эффект (по желанию)
+  const waveCount = 5;
+  for (let i = 0; i < waveCount; i++) {
+    const wave = new THREE.Mesh(
+        new THREE.CircleBufferGeometry(8 * zoom, 16),
+        new THREE.MeshPhongMaterial({ color: 0x4fc3f7, transparent: true, opacity: 0.6 })
+    );
+    wave.rotation.x = -Math.PI / 2;
+    wave.position.x = (Math.random() - 0.5) * boardWidth * zoom;
+    wave.position.z = 1;
+    wave.position.y = (Math.random() - 0.5) * 20 * zoom;
+    river.add(wave);
+  }
+
+  return river;
+}
+
+
 function createGrassTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 200; // Ширина текстуры
@@ -1651,6 +1714,36 @@ function Lane(index) {
 
       break;
     }
+    case "heroinwater": {
+      this.mesh = new heroinWater();
+      this.direction = Math.random() >= 0.5; // как и у машин: направление
+      this.logs = []; // массив бревен
+
+      const occupiedPositions = new Set();
+      const logCount = 3; // количество бревен на линии
+
+      for (let i = 0; i < logCount; i++) {
+        const log = new Log(); // Твоя функция/класс для бревна
+        let position;
+
+        do {
+          position = Math.floor(Math.random() * columns / 2);
+        } while (occupiedPositions.has(position));
+        occupiedPositions.add(position);
+
+        // Установка позиции по X
+        log.position.x = (position * positionWidth * 2 + positionWidth / 2) * zoom - boardWidth * zoom / 2;
+        if (!this.direction) log.rotation.z = Math.PI;
+
+        // Добавляем бревно в сцену и массив
+        this.mesh.add(log);
+        this.logs.push(log);
+      }
+
+      this.speed = laneSpeeds[Math.floor(Math.random() * laneSpeeds.length)] + (this.index / 60); // скорость
+
+      break;
+    }
   }
 }
 
@@ -1671,13 +1764,13 @@ document.querySelector("#retry").addEventListener("click", () => {
   retryGame();
 });
 
-document.getElementById('forward').addEventListener("click", () => move('forward'));
-
-document.getElementById('backward').addEventListener("click", () => move('backward'));
-
-document.getElementById('left').addEventListener("click", () => move('left'));
-
-document.getElementById('right').addEventListener("click", () => move('right'));
+// document.getElementById('forward').addEventListener("click", () => move('forward'));
+//
+// document.getElementById('backward').addEventListener("click", () => move('backward'));
+//
+// document.getElementById('left').addEventListener("click", () => move('left'));
+//
+// document.getElementById('right').addEventListener("click", () => move('right'));
 
 window.addEventListener("keydown", event => {
   if (gameOver) {
@@ -1758,6 +1851,9 @@ function move(direction) {
   moves.push(direction);
 }
 
+const chickenInitialX = chicken.position.x; // сохранить где-нибудь в глобальных переменных
+let lastOnLog = false;
+
 function animate(timestamp) {
   requestAnimationFrame(animate);
 
@@ -1805,6 +1901,20 @@ function animate(timestamp) {
           }
         }
         return true; // оставить в массиве
+      });
+    }
+
+    if (lane.type === "heroinwater") {
+      const drift = lane.speed * (lane.direction ? 1 : -1);
+      lane.logs.forEach(log => {
+        log.position.x += drift;
+
+        // Зацикливаем движение
+        const maxX = boardWidth * zoom / 2 + 100 * zoom;
+        const minX = -boardWidth * zoom / 2 - 100 * zoom;
+
+        if (log.position.x > maxX) log.position.x = minX;
+        if (log.position.x < minX) log.position.x = maxX;
       });
     }
   });
@@ -1884,7 +1994,7 @@ function animate(timestamp) {
   }
 
   // Проверка столкновений с машинами, грузовиками и поездами
-  if (lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck' || lanes[currentLane].type === 'railway') {
+  if (lanes[currentLane].type === 'car' || lanes[currentLane].type === 'truck' || lanes[currentLane].type === 'railway' || lanes[currentLane].type === "heroinwater") {
     const chickenMinX = chicken.position.x - chickenSize * zoom / 2;
     const chickenMaxX = chicken.position.x + chickenSize * zoom / 2;
 
@@ -1926,6 +2036,50 @@ function animate(timestamp) {
           chicken.scale.set(1, 1, 0.01);
         }
       });
+    }
+
+    if (lastOnLog) {
+      // Только что слез с бревна
+      currentColumn = Math.round(
+          (chicken.position.x + boardWidth * zoom / 2) / (positionWidth * zoom) - 0.5
+      );
+      lastOnLog = false;
+    }
+
+    if (lanes[currentLane].type === 'heroinwater') {
+      const chickenMinX = chicken.position.x - chickenSize * zoom / 2;
+      const chickenMaxX = chicken.position.x + chickenSize * zoom / 2;
+      let onLog = false;
+
+      lanes[currentLane].logs.forEach(log => {
+        const logLength = 80; // длина бревна — подстрой по нужде
+        const logMinX = log.position.x - logLength * zoom / 2;
+        const logMaxX = log.position.x + logLength * zoom / 2;
+
+        if (chickenMaxX > logMinX && chickenMinX < logMaxX) {
+          onLog = true;
+          const drift = lanes[currentLane].speed * (lanes[currentLane].direction ? 1 : -1);
+          chicken.position.x += drift;
+          const positionX = chicken.position.x;
+          camera.position.x = initialCameraPositionX + (positionX - chickenInitialX);
+          dirLight.position.x = initialDirLightPositionX + (positionX - chickenInitialX);
+        }
+      });
+
+      lastOnLog = onLog; // сохраняем на следующий кадр
+
+      if (!onLog) {
+        // Курица утонула
+        endDOM.classList.remove('hide');
+        setTimeout(() => {
+          endDOM.classList.add('show');
+        }, 1000);
+        finalScoreDom.innerText = `Your score: ${score}`;
+        console.log("Final score shown (drowned):", score);
+        gameOver = true;
+        isFlattened = true;
+        chicken.scale.set(1, 1, 0.01);
+      }
     }
   }
 
